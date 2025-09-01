@@ -1,0 +1,131 @@
+openapi: 3.0.4
+info:
+  title: Registration API
+  version: 1.0.3
+paths:
+  /register:
+    post:
+      summary: Регистрация нового пользователя
+      description: API для регистрации пользователя. Вызывается фронтендом при нажатии на кнопку "Register"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - firstname
+                - lastname
+                - username
+                - password
+                - recaptchaToken
+              properties:
+                firstname:
+                  type: string
+                  description: Имя пользователя
+                  minLength: 3
+                  maxLength: 50
+                lastname:
+                  type: string
+                  description: Фамилия пользователя
+                  minLength: 3
+                  maxLength: 50
+                username:
+                  type: string
+                  description: Никнейм
+                  minLength: 3
+                  maxLength: 50
+                password:
+                  type: string
+                  description: пароль пользователя
+                  minLength: 8
+                  maxLength: 128
+                  pattern: '^(?=.*\d)(?=.*[A-Z])(?=.*[a-z].{8,}$)'
+                recaptchaToken:
+                  type: string
+                  description: Токен от Google reCAPTCHA
+            example: #Пример запроса
+              firstname: 'Ivan'
+              lastname: 'Ivanov'
+              username: 'vanya23'
+              password: 'Eto_Parol1'
+              recaptchaToken: 'token...'      
+      responses:
+        
+        '200':
+          description: Успешная регистрация, требуется подтверждение на сайте
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - message
+                  - action
+                properties:
+                  message:
+                    type: string
+                    example: 'Подтвердите действие на сайте'
+                  action:
+                    type: object
+                    required:
+                      - type
+                      - label
+                    properties:
+                      type:
+                        type: string
+                        enum: [pressok]
+                        example: 'pressok'
+                      label:
+                        type: string
+                        example: 'OK'
+        
+        '400':
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                  - details
+                properties:
+                  error:
+                    type: string
+                    example: 'Bad Request'
+                  details:
+                    type: string
+                    example: "Passwords must have at least one non alphanumeric character, one digit ('0'-'9'), one uppercase ('A'-'Z'), one lowercase ('a'-Z'), one special character and Password must be eight characters or longer."      
+ 
+        '409':
+          description: Пользователь уже существует
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                  - details
+                properties:
+                  error:
+                    type: string
+                    example: 'Conflict'
+                  details:
+                    type: string
+                    example: 'user exists!'   
+
+        '422':
+          description: reCAPTCHA не подтверждена
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - error
+                  - details
+                properties:
+                  error:
+                    type: string
+                    example: 'Unprocessable Entity'
+                  details:
+                    type: string
+                    example: 'Please verify reCAPTCHA to register!'
