@@ -40,7 +40,7 @@ paths:
                   description: пароль пользователя
                   minLength: 8
                   maxLength: 128
-                  pattern: '^(?=.*\d)(?=.*[A-Z])(?=.*[a-z].{8,}$)'
+                  pattern: '^(?=.*\d)(?=.*[A-Z])(?=.*[a-z]).{8,}$'
                 recaptchaToken:
                   type: string
                   description: Токен от Google reCAPTCHA
